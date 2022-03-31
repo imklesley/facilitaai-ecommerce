@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="row justify-content-between">
+        <div class="col-lg-6 ">
+            <div class="card shadow-lg p-2 mb-4">
+                <div class="card mb-2">
+                    <button onclick="history.back()" class="btn btn-outline-dark"><span>&#8592;</span> Back to cart
+                    </button>
+                </div>
+                <br>
+
+                <h3>Order Summary</h3>
+                <hr>
+                {% for item in order.orderitem_set.all %}
+                    <div class="d-flex align-items-center justify-content-between p-2">
+
+                        <img src="{{ item.product.gallery.cover.image.url }}"
+                             alt="{{ item.product.gallery.cover.about }}" width="80em">
+
+                        <p style="padding-left: 1em; width: 7em; text-overflow: ellipsis; ">{{ item.product.name }}
+                        <div class="row m-0">
+                            <div class="col pb-3 align-items-center justify-content-center">
+
+                                <strong>({{ item.size.name }})</strong>
+                                 <div class="rounded-circle" style="height: 1.5em;width:1.5em; background:  {{ item.color.hex_color }}"></div>
+                            </div>
+                        </div>
+                        </p>
+
+                        <p style="padding-left: 1em">R$ {{ item.price }}</p>
+
+                        <p style="padding-left: 1em; font-weight: bold; font-size: 0.8rem">x{{ item.quantity }}</p>
+
+
+                    </div>
+                    <hr>
+                {% endfor %}
+
+                <div class="d-flex justify-content-between p-2">
+                    <h5 style="font-size: 1.1rem">Items: {{ order.quantity_items }}</h5>
+                    <h5 style="font-size: 1.1rem">Total: R$ {{ order.total_price }}</h5>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-6">
+
+
+            <div class="card shadow-lg p-4">
+                <div id="form-wrapper">
+
+                    <form action="">
+                        <h5>User Data</h5>
+                        <div id="user-data">
+                            <div class="form-field  checkout-field">
+                                <input required class="form-control" type="text" name="name"
+                                       placeholder="Name.."
+                                       {% if request.user.is_authenticated %}value="{{ request.user.customer.name }}"
+                                       readonly {% endif %}>
+                            </div>
+                            <div class="form-field checkout-field">
+                                <input required class="form-control" type="email" name="email" placeholder="Email.."
+                                       {% if request.user.is_authenticated %}value="{{ request.user.email }}"
+                                       readonly {% endif %}>
+                            </div>
+
+                        </div>
+
+                        <div id="delivery-data">
+                            <hr>
+                            <h5>Shipping Info</h5>
+                            <div class="checkout-field">
+                                <input class="form-control" type="text" name="address" placeholder="Address..">
+                            </div>
+                            <div class="checkout-field">
+                                <input class="form-control" type="text" name="city" placeholder="City..">
+                            </div>
+                            <div class="checkout-field">
+                                <input class="form-control" type="text" name="state" placeholder="State..">
+                            </div>
+                            <div class="checkout-field">
+                                <input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
+                            </div>
+
+                        </div>
+
+                        <hr>
+                        <input type="submit" class="btn btn-success btn-md w-100" value="Continue">
+
+
+                    </form>
+
+                </div>
+            </div>
+
+            <br>
+
+            <div class="card shadow-lg p-4" id="payment-data">
+                <strong>Payment Options</strong>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+{% endblock %}

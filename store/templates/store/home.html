@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    {% if products.count > 0 %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for product in products %}
+                {% if product.visible %}
+                    <div class="col">
+
+                        <div class="card  shadow-sm card-product"
+                             onmouseover="this.classList.remove('shadow-sm'); this.classList.add('shadow-lg')"
+                             onmouseout="this.classList.remove('shadow-lg'); this.classList.add('shadow-sm')">
+                            <img width="100%" height="300em" style="object-fit: cover;"
+
+                                 src="{{ product.gallery.cover.image.url }}"
+                                    {% if product.gallery.productimage_set.all.count > 1 %}
+                                 onmouseover="this.src='{{ product.gallery.productimage_set.all.1.image.url }}';"
+                                 onmouseout="this.src='{{ product.gallery.productimage_set.all.0.image.url }}';"
+                                    {% endif %}
+                                 alt="{{ product.gallery.cover.about }}">
+                            <div class="card-body">
+                                <h4 style="color: black;font-size: 1.1rem;font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;">
+                                    {{ product.name }}
+                                </h4>
+
+                                <div class="product-sizes">
+                                    <small>Sizes:</small>
+                                    <br>
+                                    {% for size in product.size_table.size_set.all %}
+                                        <div class="btn-group">
+                                            <div>
+                                                <input type="radio" class="btn-check"
+                                                       name="product{{ product.id }}-size-option" id="size{{ size.id }}"
+                                                       autocomplete="off" value="{{ size.id }}"
+                                                />
+                                                <label class="btn btn-outline-secondary rounded-circle"
+                                                       style="font-size: 0.8rem"
+                                                       for="size{{ size.id }}">{{ size.name }}</label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    <br>
+                                </div>
+
+                                <div class="product-colors">
+                                    <small>Colors:</small>
+                                    <br>
+
+                                    {% for color in product.size_table.size_set.all.0.color_table.color_set.all%}
+                                       <div class="btn-group">
+                                                <div>
+                                                    <input type="radio" class="btn-check"
+                                                           name="product{{ product.id }}-color-option"
+                                                           id="product{{ product.id }}-color{{ color.id }}"
+                                                           autocomplete="off" value="{{ color.id }}"
+                                                    />
+                                                    <label class="btn rounded-circle rounded-lg p-3"
+                                                           style="background: {{ color.hex_color }};height: 2em"
+                                                           for="product{{ product.id }}-color{{ color.id }}"></label>
+                                                </div>
+                                            </div>
+                                    {% endfor %}
+
+
+
+                                    <br>
+                                </div>
+
+
+                                <small style="color: grey">
+                                    {% if product.old_price > product.price %}
+                                        <del>R$ {{ product.old_price }}</del>
+                                    {% endif %}
+
+                                </small>
+                                <p style="color: #404040;font-weight: bold;font-size: 1.5rem">R$ {{ product.price }}</p>
+                                {% if product.old_price < product.price %}
+                                    <br>
+                                {% endif %}
+
+                                <div class="d-flex justify-content-center">
+                                    <div class="btn-group">
+
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-md btn-outline-primary" data-toggle="modal"
+                                                data-target="#product-{{ product.id|stringformat:"i" }}">
+                                            Quick Look
+                                        </button>
+
+                                        <button data-action="add" data-product="{{ product.id }}"
+                                                type="button"
+                                                class="btn btn-md btn-outline-success  update-cart">Add to cart
+                                        </button>
+                                    </div>
+                                </div>
+                                <br>
+                                <div id="alert-product-{{ product.id }}" class="alert alert-danger" data-dismiss="alert"
+                                     role="alert" style="display: none">
+                                    Choose a size and a color before adding to cart!
+                                </div>
+                            </div>
+                        </div>
+                        {% include 'store/snippets/product_modal.html' with  product=product %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <div class="col-lg-12 text-center">
+            <br>
+            <br>
+            <br>
+            <br>
+            <h3>There is no product!</h3>
+        </div>
+
+    {% endif %}
+
+    <script type="application/javascript" src="{% static 'store/js/cart.js' %}"></script>
+
+{% endblock %}

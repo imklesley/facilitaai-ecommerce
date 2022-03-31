@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <br>
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <a class="btn btn-outline-dark" onclick="history.back()"><span>&#8592;</span> Keep Shopping</a>
+                <br>
+                <div class="d-flex justify-content-between m-2">
+
+                    <div class="col-lg-7">
+                        <p style="font-size: 1.1rem">Nº Products: <strong>{{ order.orderitem_set.count }}</strong></p>
+                        <p style="font-size: 1.1rem">Nº Items <strong>{{ order.quantity_items }}</strong></p>
+                        <p style="font-size: 1.1rem">Total: <strong>R$ {{ order.total_price }}</strong></p>
+                    </div>
+
+                    <div class="col-lg-1">
+                        <a class="btn btn-outline-success btn-md" href="{% url 'store:checkout' %}">Checkout</a>
+                    </div>
+
+                </div>
+
+            </div>
+            <br>
+            <div class="card">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="text-center" scope="col">Product</th>
+                        <th class="text-center" scope="col">Size-Color</th>
+                        <th class="text-center" scope="col">Quantity</th>
+                        <th class="text-center" scope="col">Unit Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for item in order.orderitem_set.all %}
+                        <tr class="text-center" style="vertical-align: middle">
+                            <td><img
+                                    src="{{ item.product.gallery.productimage_set.all.0.image.url }}"
+                                    alt="" width="80em"></td>
+
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <div style="padding-right: 0.3em">
+                                        {{ item.size.name }}
+                                    </div>
+                                    <div class="rounded-circle" style=" height: 1.5em;width:1.5em; background:  {{ item.color.hex_color }}"></div>
+                                </div>
+                            </td>
+
+                            <td>
+
+                                <div class="d-flex justify-content-center ">
+                                    <div class="row  d-flex justify-content-center">
+                                        <div class="col-2">
+                                            <p style="padding-top: 0.7em">{{ item.quantity }}</p>
+                                        </div>
+
+                                        <div class="col-2">
+                                            <a href="" class="update-cart">
+                                                <img src="{% static 'store/images/arrow-up.png' %}" width="10em" alt="">
+                                            </a>
+                                            <a href="" class="update-cart">
+                                                <img src="{% static 'store/images/arrow-down.png' %}" width="10em"
+                                                     alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>R$ {{ item.price }}</td>
+                        </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
