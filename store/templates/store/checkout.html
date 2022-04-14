@@ -25,10 +25,11 @@
                             <div class="col pb-3 align-items-center justify-content-center">
 
                                 <strong>({{ item.size.name }})</strong>
-                                 <div class="rounded-circle" style="height: 1.5em;width:1.5em; background:  {{ item.color.hex_color }}"></div>
+                                <div class="rounded-circle"
+                                     style="height: 1.5em;width:1.5em; background:  {{ item.color.hex_color }}"></div>
                             </div>
                         </div>
-                        </p>
+
 
                         <p style="padding-left: 1em">R$ {{ item.price }}</p>
 
@@ -51,57 +52,72 @@
         <div class="col-lg-6">
 
 
-            <div class="card shadow-lg p-4">
-                <div id="form-wrapper">
+            {% if not request.user.is_authenticated %}
 
-                    <form action="">
-                        <h5>User Data</h5>
-                        <div id="user-data">
-                            <div class="form-field  checkout-field">
-                                <input required class="form-control" type="text" name="name"
-                                       placeholder="Name.."
-                                       {% if request.user.is_authenticated %}value="{{ request.user.customer.name }}"
-                                       readonly {% endif %}>
+                <div class="card shadow-lg p-4">
+                    <div id="form-wrapper">
+
+                        <form id="checkout-form" action="">
+                            <h5>User Data</h5>
+
+                            <div id="user-data">
+                                <div class="form-field  checkout-field">
+                                    <input required class="form-control" type="text" name="name"
+                                           placeholder="Name..">
+                                </div>
+                                <div class="form-field checkout-field">
+                                    <input required class="form-control" type="email" name="email"
+                                           placeholder="Email..">
+
+                                    <hr>
+                                    <div id="delivery-data">
+
+                                        <h5>Shipping Info</h5>
+                                        <div class="checkout-field">
+                                            <input class="form-control" type="text" name="address"
+                                                   placeholder="Address.."
+                                                   value="{{ request.user.customer.shippingaddress.address }}">
+                                        </div>
+                                        <div class="checkout-field">
+                                            <input class="form-control" type="text" name="city" placeholder="City.."
+                                                   value="{{ request.user.customer.shippingaddress.city }}">
+                                        </div>
+                                        <div class="checkout-field">
+                                            <input class="form-control" type="text" name="state" placeholder="State.."
+                                                   value="{{ request.user.customer.shippingaddress.state }}">
+                                        </div>
+                                        <div class="checkout-field">
+                                            <input class="form-control" type="text" name="zipcode"
+                                                   placeholder="Zip code.."
+                                                   value="{{ request.user.customer.shippingaddress.zipcode }}">
+                                        </div>
+
+
+                                    </div>
+
+                                    <br>
+                                    <input id="btn-checkout-submit" type="submit" class="btn btn-success btn-md w-100"
+                                           value="Continue">
+
+                                </div>
                             </div>
-                            <div class="form-field checkout-field">
-                                <input required class="form-control" type="email" name="email" placeholder="Email.."
-                                       {% if request.user.is_authenticated %}value="{{ request.user.email }}"
-                                       readonly {% endif %}>
-                            </div>
-
-                        </div>
-
-                        <div id="delivery-data">
-                            <hr>
-                            <h5>Shipping Info</h5>
-                            <div class="checkout-field">
-                                <input class="form-control" type="text" name="address" placeholder="Address..">
-                            </div>
-                            <div class="checkout-field">
-                                <input class="form-control" type="text" name="city" placeholder="City..">
-                            </div>
-                            <div class="checkout-field">
-                                <input class="form-control" type="text" name="state" placeholder="State..">
-                            </div>
-                            <div class="checkout-field">
-                                <input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
-                            </div>
-
-                        </div>
-
-                        <hr>
-                        <input type="submit" class="btn btn-success btn-md w-100" value="Continue">
 
 
-                    </form>
+                        </form>
 
+                    </div>
                 </div>
-            </div>
+                <br>
+            {% endif %}
 
-            <br>
 
-            <div class="card shadow-lg p-4" id="payment-data">
+
+            <div id="payment-data" class="card shadow-lg p-4 hidden">
                 <strong>Payment Options</strong>
+                <br>
+                <button id="make-payment" type="button" class="btn btn-primary mb-2">Make Payment</button>
+                <button id="continue-on-whatsapp" type="button" class="btn btn-outline-success">Finish on whatsapp <img
+                        src="{% static 'base/images/icons/checkout/whatsapp.webp' %}" height="25em" alt=""></button>
             </div>
 
         </div>
@@ -109,6 +125,6 @@
 
     </div>
 
-
+    <script type="text/javascript" src="{% static 'store/js/checkout.js' %}"></script>
 
 {% endblock %}

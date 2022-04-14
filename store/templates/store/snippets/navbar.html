@@ -1,8 +1,9 @@
 {% load static %}
 
+
 <header class="p-3 bg-dark text-white">
     <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <div class="d-flex flex-wrap align-items-center justify-content-center">
             <a href="{% url 'store:home' %}" title="Facilita Aí!"
                class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                 <img src="{% static 'base/images/icons/logo/logo.svg' %}" alt="Logo Facilita Aí!" height="60">
@@ -21,13 +22,27 @@
             </form>
 
             <div class="text-end">
-                <button type="button" class="btn btn-outline-light me-2">Login</button>
-                <button type="button" class="btn btn-primary">Sign-up</button>
 
-                <a class="p-2" href="{% url 'store:cart' %}" title="Your Shopping Cart">
+                {% if request.user.is_authenticated %}
+                    <p style="padding-top: 1em">Olá, <strong>{{ request.user.customer.name.split.0 }}</strong></p>
+                {% else %}
+                    <button type="button" class="btn btn-outline-light me-2">Login</button>
+                    <button type="button" class="btn btn-primary">Sign-up</button>
+                {% endif %}
+            </div>
+
+            <div>
+                <a class="p-2" href="{% url 'store:cart' %}" title="Your Shopping Cart" style="position: relative">
                     <img src="{% static 'base/images/icons/shopping_cart.png' %}" height="30" alt="Shopping Cart">
+                    <p id="quantity_of_items" style="position: absolute;top: -0.8em;right:
+                            {% if order.quantity_items <= 9 %}
+                                -.3em
+                            {% elif order.quantity_items <= 99 %}
+                                -.8em
+                            {% endif %};
+                            color: white; font-weight: normal; ">
+                        {{ order.quantity_items }}</p>
                 </a>
-
             </div>
         </div>
     </div>

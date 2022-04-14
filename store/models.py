@@ -13,6 +13,11 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def has_address(self):
+
+        return self.shippingaddress != None
+
 
 class Gallery(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False)
@@ -88,6 +93,12 @@ class Size(models.Model):
     def __str__(self):
         return f'{self.size_table.name} - {self.name}'
 
+    @property
+    def available_colors(self):
+        colors = self.color_table.color_set.filter(color_table=self.color_table)
+        # print(colors)
+        return colors
+
 
 class Category(models.Model):
     name = models.CharField(max_length=200, null=True, blank=False)
@@ -110,46 +121,10 @@ class Product(models.Model):
 
     size_table = models.OneToOneField(SizeTable, null=False, blank=False, on_delete=models.CASCADE)
 
-    color_table = models.OneToOneField(ColorTable, null=True, blank=True, on_delete=models.CASCADE)
+    # color_table = models.OneToOneField(ColorTable, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
-
-    @property
-    def available_colors(self):
-        sizes = self.size_table.size_set.all()
-
-        print(sizes[0].color_table.color_set)
-        colors = {}
-
-        for size in sizes:
-            for color in size.color_table.color_set.all():
-                if colors.get(color):
-                    colors[color].append(size)
-                else:
-                    colors[color] = []
-                    colors[color].append(size)
-
-        print(colors)
-
-        return colors
-
-    @property
-    def quantity_items(self):
-        size_table = self.size_table.size_set.all()
-
-        quantity = 0
-
-        colors = []
-
-        for size in size_table:
-            colors = size.color_table.color_set.all()
-
-        if colors:
-            for color in colors:
-                quantity += color.quantity
-
-        return quantity
 
 
 class Order(models.Model):
@@ -195,7 +170,7 @@ class OrderItem(models.Model):
     size = models.ForeignKey(Size, null=True, blank=False, on_delete=models.CASCADE)
     color = models.ForeignKey(Color, null=True, blank=True, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=7, decimal_places=2, null=False, blank=False)
-    quantity = models.IntegerField(null=False, blank=False)
+    quantity = models.IntegerField(default=0, null=False, blank=False)
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -203,7 +178,7 @@ class OrderItem(models.Model):
 
 
 class ShippingAddress(models.Model):
-    order = models.ForeignKey(Order, null=True, blank=False, on_delete=models.SET_NULL)
+    customer = models.OneToOneField(Customer, null=True, blank=False, on_delete=models.CASCADE)
     city = models.CharField(max_length=100, blank=False, null=False)
     state = models.CharField(max_length=100, blank=False, null=False)
     address = models.CharField(max_length=250, blank=False, null=False)

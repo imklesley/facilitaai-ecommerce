@@ -2,15 +2,31 @@
 {% load static %}
 
 {% block content %}
+
     {% if products.count > 0 %}
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {% for product in products %}
                 {% if product.visible %}
+
                     <div class="col">
 
                         <div class="card  shadow-sm card-product"
                              onmouseover="this.classList.remove('shadow-sm'); this.classList.add('shadow-lg')"
                              onmouseout="this.classList.remove('shadow-lg'); this.classList.add('shadow-sm')">
+
+                            {#      Mensagens de sucesso e erro ao tentar adicionar ao carrinho                      #}
+                            <div id="succeed-add-product-to-cart-{{ product.id }}"
+                                 class="alert alert-success text-center hidden"
+                                 role="alert">
+                                {# Colocar via js as mensages de sucesso #}
+                            </div>
+
+                            <div id="failed-add-product-to-cart-{{ product.id }}" class="alert alert-danger text-center hidden "
+                                 role="alert">
+                                {# Colocar via js as mensages de error #}
+                            </div>
+
+
                             <img width="100%" height="300em" style="object-fit: cover;"
 
                                  src="{{ product.gallery.cover.image.url }}"
@@ -25,10 +41,9 @@
                                 </h4>
 
                                 <div class="product-sizes">
-                                    <small>Sizes:</small>
-                                    <br>
+                                    <small style="padding-right: 2px">Sizes:</small>
                                     {% for size in product.size_table.size_set.all %}
-                                        <div class="btn-group">
+                                        <div class="btn-group product-size" id="product-size-{{ size.id }}">
                                             <div>
                                                 <input type="radio" class="btn-check"
                                                        name="product{{ product.id }}-size-option" id="size{{ size.id }}"
@@ -39,17 +54,23 @@
                                                        for="size{{ size.id }}">{{ size.name }}</label>
                                             </div>
                                         </div>
+
                                     {% endfor %}
                                     <br>
                                 </div>
 
-                                <div class="product-colors">
-                                    <small>Colors:</small>
-                                    <br>
 
-                                    {% for color in product.size_table.size_set.all.0.color_table.color_set.all%}
-                                       <div class="btn-group">
-                                                <div>
+                                <div class="product-colors ">
+
+
+                                    {% for size in product.size_table.size_set.all %}
+                                        <div class="btn-group align-items-center size-colors hidden"
+                                             id="size-colors-{{ size.id }}">
+                                            <br>
+
+                                            <small>Colors:</small>
+                                            {% for color in size.available_colors %}
+                                                <div class="pt-2 m-2">
                                                     <input type="radio" class="btn-check"
                                                            name="product{{ product.id }}-color-option"
                                                            id="product{{ product.id }}-color{{ color.id }}"
@@ -59,12 +80,12 @@
                                                            style="background: {{ color.hex_color }};height: 2em"
                                                            for="product{{ product.id }}-color{{ color.id }}"></label>
                                                 </div>
-                                            </div>
+                                            {% endfor %}
+                                        </div>
+
                                     {% endfor %}
 
 
-
-                                    <br>
                                 </div>
 
 
@@ -119,6 +140,7 @@
 
     {% endif %}
 
+    <script type="application/javascript" src="{% static 'store/js/product.js' %}"></script>
     <script type="application/javascript" src="{% static 'store/js/cart.js' %}"></script>
 
 {% endblock %}
