@@ -26,9 +26,11 @@
         const is_user_authenticated = {% if  request.user.is_authenticated %} true {% else %} false {% endif %}
         {#console.log(is_user_authenticated)#}
     </script>
+    
+
 
     <script type="text/javascript">
-        function getToken(name) {
+        function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
@@ -43,9 +45,45 @@
             }
             return cookieValue;
         }
+        
 
-        const csrf_token = getToken('csrftoken');
+
+
+        // Coleta-se o csrf token para conseguir realizar o post request
+        const csrf_token = getCookie('csrftoken');
+
+        // Vai recuperar os dados do cookie que estão salvos na chave "cart", após isso será 
+        //retornado uma string json, e então vamos converter para json para conseguirmos 
+        //inserir e retirar elementos, caso não encontre retorna null
+        let cart = JSON.parse(getCookie('cart'))
+
+        // Verifica-se se o cart existe nos cookies
+        if(!cart){
+            // Inicia o carrinho vazio
+            cart = {}
+            
+            // Salva o carrinho vazio nos cookies --- Observe o que vem após o JSON.stringify
+            // foi estabelecido qual o domínio e o caminho deve possuir esse cookie
+            // do jeito que fizemos ele está usando o domínio atual, logo esse cookie não vai aparecer
+            // em nenhum outro site, como por exemplo o Instagram.
+            document.cookie='cart=' + JSON.stringify(cart) + ';domain=;path=/'
+
+            console.log('Cart recovered!!')
+        }
+
+        console.log('Cart: ' + JSON.stringify(cart))
+
+
+
+
+
+
     </script>
+
+
+
+
+
     {#  My Js  #}
 
 </head>

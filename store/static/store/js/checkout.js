@@ -35,10 +35,12 @@ make_payment.addEventListener('click', function (event) {
             }
         }).then(function (response) {
 
-            return response.json()
+            if (response.status == 200) {
+                return response.json()
+            }
         }).then((data) => {
             // console.log(data)
-
+            alert('Your order was completed, your payment is processing now!!')
             //Retorna para a página inicial
             location.href = "/"
         })
