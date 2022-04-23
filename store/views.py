@@ -1,30 +1,21 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import JsonResponse
 import json
 from django.shortcuts import get_object_or_404
 
 
-from .models import Product, Order, OrderItem, Color, Size
-from store.utils import cookie_cart
+from .models import Product, Order, OrderItem, Color
+from store.utils import cart_data
 
-
-# Create your views here.
 
 def home(request):
     context = {}
 
+    context['order'] = cart_data(request=request)
+
     # TODO: Fazer paginação
     products = Product.objects.all()
-
     context['products'] = products
-
-    if request.user.is_authenticated:
-        order, created = Order.objects.get_or_create(
-            customer=request.user.customer, on_cart=True)
-    else:
-        order = cookie_cart(request=request)
-
-    context['order'] = order
 
     return render(request, 'store/home.html', context)
 
@@ -32,19 +23,7 @@ def home(request):
 def cart(request):
     context = {}
 
-    user = request.user
-
-    if user.is_authenticated:
-        customer = user.customer
-        order, created = Order.objects.get_or_create(
-            customer=customer, on_cart=True)
-
-    else:
-        order = cookie_cart(request=request)
-
-    context['order'] = order
-
-    print(context['order'])
+    context['order'] = cart_data(request)
 
     return render(request, 'store/cart.html', context)
 
@@ -52,20 +31,7 @@ def cart(request):
 def checkout(request):
     context = {}
 
-    user = request.user
-
-    if user.is_authenticated:
-        customer = user.customer
-        order, created = Order.objects.get_or_create(
-            customer=customer, on_cart=True)
-
-        if order.orderitem_set.count() == 0:
-            return redirect('store:home')
-
-    else:
-        order = cookie_cart(request=request)
-
-    context['order'] = order
+    context['order'] = cart_data(request)
 
     return render(request, 'store/checkout.html', context)
 

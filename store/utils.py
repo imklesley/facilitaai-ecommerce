@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 
 import json
 
-from .models import Product, Color, Size
+from .models import Product, Color, Size, Order
 
 
 def cookie_cart(request):
@@ -36,6 +36,22 @@ def cookie_cart(request):
     # Caso não tenha nenhum produto no carrinho não há pq abrir a tela de checkout
     if order['orderitem_set']['count'] == 0:
         return redirect('store:home')
+    
+
+    return order
+
+
+
+def cart_data(request):
+    user = request.user
+
+    if user.is_authenticated:
+        customer = user.customer
+        order, created = Order.objects.get_or_create(
+            customer=customer, on_cart=True)
+
+    else:
+        order = cookie_cart(request=request)
     
 
     return order
