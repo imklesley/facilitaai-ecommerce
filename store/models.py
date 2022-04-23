@@ -162,7 +162,39 @@ class Order(models.Model):
             quantity += item.quantity
 
         return quantity
+        
+    @property
+    def whatsapp_order_text(self):
+        # Código para pular linha
+        break_line = '%0A'
+        # pego todos os itens dentro do pedido
+        items = self.orderitem_set.all()
+        # Inicializo o texto a ser enviado pro cliente e adiciono duas vezes o break_line
+        text = f'Olá, gostaria de realizar o pedido: {break_line}{break_line}'
+        # Pra cada item da ordem especificar os detalhes e pular uma linha
+        for item in items:
+            text += f'*{item.quantity}x*\t-\t{item.product.name}\t-\t{item.size.name}\t-\t{item.color.name}\t- R$ \t{item.product.price}{break_line}'
 
+        text += break_line
+        text += '---------------- Subtotais ---------------' + break_line
+
+        # Mostra os quantitativos
+        text += f'*Quantidade de Itens:* {self.quantity_items}{break_line}'
+        text += f'*Total:* R$ {self.total_price}{break_line}{break_line}'
+        
+        # Dados do customer
+        text += '------------ Dados do Cliente -----------' + break_line
+        text += f'*Nome:* {self.customer.name}{break_line}'
+        text += f'*Email:* {self.customer.user.email}{break_line}'
+
+        address = self.customer.shippingaddress
+        text += f'*Cidade-UF:* {address.city}-{address.state}{break_line}'
+        text += f'*Endereço:* {address.address}{break_line}'
+        text += f'*CEP:* {address.zipcode}{break_line}'
+        text += '---------------- Order ---------------' + break_line
+        text += f'*Order:* {self.id}{break_line}'
+
+        return text
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, null=True, blank=False, on_delete=models.CASCADE)

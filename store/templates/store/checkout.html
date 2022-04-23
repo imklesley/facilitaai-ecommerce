@@ -115,7 +115,7 @@
             <div id="payment-data" class="card shadow-lg p-4 hidden">
                 <strong>Payment Options</strong>
                 <br>
-                <button id="make-payment" type="button" class="btn btn-primary mb-2">Make Payment</button>
+                <button id="make-payment" type="button" class="btn btn-primary mb-2">{% if request.user.is_authenticated %}Make Payment{%else%}<strong>Sign In</strong> to make the payment{% endif %}</button>
                 <button id="continue-on-whatsapp" type="button" class="btn btn-outline-success">Finish on whatsapp <img
                         src="{% static 'base/images/icons/checkout/whatsapp.webp' %}" height="25em" alt=""></button>
             </div>

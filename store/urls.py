@@ -13,6 +13,7 @@ urlpatterns = [
     path('checkout/', checkout, name='checkout'),
     path('update_cart/', update_cart, name='update_cart'),
     path('process_order/', process_order, name='process_order'),
+    path('process_order_whatsapp/', process_order_whatsapp, name='process_order_whatsapp'),
 ]
 
 if settings.DEBUG:

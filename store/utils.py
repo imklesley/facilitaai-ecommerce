@@ -33,11 +33,6 @@ def cookie_cart(request):
         order['quantity_items'] += cart_item['quantity']
         order['total_price'] += cart_item['quantity'] * product.price
 
-    # Caso não tenha nenhum produto no carrinho não há pq abrir a tela de checkout
-    if order['orderitem_set']['count'] == 0:
-        return redirect('store:home')
-    
-
     return order
 
 
@@ -55,3 +50,7 @@ def cart_data(request):
     
 
     return order
+
+
+
+    
