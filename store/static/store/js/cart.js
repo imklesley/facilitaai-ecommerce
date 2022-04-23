@@ -143,6 +143,13 @@ for (let i = 0; i < update_cart_btns.length; i++) {
             quantity_element.innerText = (+quantity_element.innerText) + 1
             //console.log(quantity_element.innerText)
 
+            let success_element = document.getElementById('succeed-add-product-to-cart-' + product_id)
+            success_element.innerText = 'The product has been added to the cart!'
+            success_element.classList.remove('hidden')
+            setTimeout(() => {
+                success_element.classList.add('hidden')
+            }, 3500);
+
         }
         // Caso seja remoção retire uma unidade da quantidade do produto QUE ESTÀ no cart, caso o valor
         // após a remoção for 0, retira o produto do cart

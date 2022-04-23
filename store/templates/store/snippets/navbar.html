@@ -21,9 +21,17 @@
             </form>
 
             <div class="text-end">
-
+                
                 {% if request.user.is_authenticated %}
-                    <p style="padding-top: 1em">Olá, <strong>{{ request.user.customer.name.split.0 }}</strong></p>
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle light" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white">
+                            Olá, <strong>{{ request.user.customer.name.split.0 }}</strong>
+
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item "  href="{% url 'account:logout' %}">Logout</a>
+                        </div>
+                    </div>
                 {% else %}
                     <button type="button" class="btn btn-outline-light me-2">Login</button>
                     <button type="button" class="btn btn-primary">Sign-up</button>
