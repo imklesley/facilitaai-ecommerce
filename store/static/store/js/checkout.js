@@ -27,28 +27,24 @@ make_payment.addEventListener('click', function (event) {
     console.log('Let\'s pay!')
 
     const url = '/process_order/'
-    if (is_user_authenticated) {
-        fetch(url, {
-            "method": "POST",
-            "headers": {
-                'X-CSRFToken': csrf_token
-            }
-        }).then(function (response) {
 
-            if (response.status == 200) {
-                return response.json()
-            }
-        }).then((data) => {
-            // console.log(data)
-            alert('Your order was completed, your payment is processing now!!')
-            //Retorna para a página inicial
-            location.href = "/"
-        })
-    } else {
-        // Usuário não autenticado
-    }
+    fetch(url, {
+        "method": "POST",
+        "headers": {
+            'X-CSRFToken': csrf_token
+        }
+    }).then(function (response) {
 
-
+        if (response.status == 200) {
+            return response.json()
+        }
+    }).then((data) => {
+        // console.log(data)
+        alert('Your order was completed, your payment is processing now!!')
+        //Retorna para a página inicial
+        location.href = "/"
+    })
+    
 })
 
 

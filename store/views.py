@@ -1,12 +1,11 @@
-from http import cookies
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-
 import json
-
 from django.shortcuts import get_object_or_404
 
+
 from .models import Product, Order, OrderItem, Color, Size
+from store.utils import cookie_cart
 
 
 # Create your views here.
@@ -23,21 +22,7 @@ def home(request):
         order, created = Order.objects.get_or_create(
             customer=request.user.customer, on_cart=True)
     else:
-        cookies = request.COOKIES
-        # print(cookies)
-        # Verifica-se se o cookie cart existe na request, se não existe seta
-        # cookie cart para {}
-        try:
-            cookie_cart = json.loads(cookies['cart'])
-        except KeyError:
-            cookie_cart = {}
-        # print(cookie_cart)
-
-        order = {'quantity_items': 0}
-
-        for cart_item in cookie_cart.values():
-            order['quantity_items'] += cart_item['quantity']
-
+        order = cookie_cart(request=request)
 
     context['order'] = order
 
@@ -55,32 +40,7 @@ def cart(request):
             customer=customer, on_cart=True)
 
     else:
-        cookies = request.COOKIES
-        # print(cookies)
-        # Verifica-se se o cookie cart existe na request, se não existe seta
-        # cookie cart para {}
-        try:
-            cookie_cart = json.loads(cookies['cart'])
-        except KeyError:
-            cookie_cart = {}
-        # print(cookie_cart)
-
-        order = {'orderitem_set': {'all': [], 'count': 0, },
-                 'quantity_items': 0, 'total_price': 0}
-
-        for cart_item in cookie_cart.values():
-            product = Product.objects.get(id=cart_item['product_id'])
-            color = Color.objects.get(id=cart_item['color_id'])
-            size = Size.objects.get(id=cart_item['size_id'])
-
-            item = {'product': product, 'size': size,
-                    'color': color, 'quantity': cart_item['quantity'], }
-
-            order['orderitem_set']['all'].append(item)
-
-            order['orderitem_set']['count'] += 1
-            order['quantity_items'] += cart_item['quantity']
-            order['total_price'] += cart_item['quantity'] * product.price
+        order = cookie_cart(request=request)
 
     context['order'] = order
 
@@ -103,36 +63,7 @@ def checkout(request):
             return redirect('store:home')
 
     else:
-        cookies = request.COOKIES
-        # print(cookies)
-        # Verifica-se se o cookie cart existe na request, se não existe seta
-        # cookie cart para {}
-        try:
-            cookie_cart = json.loads(cookies['cart'])
-        except KeyError:
-            cookie_cart = {}
-        # print(cookie_cart)
-
-        order = {'orderitem_set': {'all': [], 'count': 0, },
-                 'quantity_items': 0, 'total_price': 0}
-
-        for cart_item in cookie_cart.values():
-            product = Product.objects.get(id=cart_item['product_id'])
-            color = Color.objects.get(id=cart_item['color_id'])
-            size = Size.objects.get(id=cart_item['size_id'])
-
-            item = {'product': product, 'size': size,
-                    'color': color, 'quantity': cart_item['quantity'], }
-
-            order['orderitem_set']['all'].append(item)
-
-            order['orderitem_set']['count'] += 1
-            order['quantity_items'] += cart_item['quantity']
-            order['total_price'] += cart_item['quantity'] * product.price
-
-        # Caso não tenha nenhum produto no carrinho não há pq abrir a tela de checkout
-        if order['orderitem_set']['count'] == 0:
-            return redirect('store:home')
+        order = cookie_cart(request=request)
 
     context['order'] = order
 
